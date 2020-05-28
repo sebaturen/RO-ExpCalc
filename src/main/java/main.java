@@ -1,6 +1,6 @@
 import network.PacketInterceptor;
 
-public class ROExpCalc {
+public class main {
 
     public static ROObjectController roController = new ROObjectController();
 

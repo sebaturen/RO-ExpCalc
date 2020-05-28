@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public class PacketDecryption {
 
     public PacketDecryption() {
@@ -37,8 +39,16 @@ public class PacketDecryption {
         {
             String packContent = packet.substring(index, index + (EXP_PACKET_SIZE*2)+(EXP_PACKET_SIZE-1));
             String[] sepContent = packContent.split(" ");
+            // Packet content
+            String[] accountId = Arrays.copyOfRange(sepContent, 2, 5+1);
+            String[] exp = Arrays.copyOfRange(sepContent, 6, 13+1);
+            String[] type = Arrays.copyOfRange(sepContent, 13, 14+1);
 
             System.out.println(packContent);
+            System.out.println("Account: "+ accountId);
+            System.out.println("Exp: "+ exp);
+            System.out.println("Type: "+ type);
+            System.out.println("---------");
         }
     }
 

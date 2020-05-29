@@ -1,43 +1,47 @@
-package models;
+package com.ro.models;
 
-import enums.ExpTypeEnum;
+import com.ro.enums.ExpTypeEnum;
 
 public class Account {
 
-    private int id;
+    private long id;
     private int port;
     private Exp baseExp = new Exp(ExpTypeEnum.BASE);
     private Exp jobExp = new Exp(ExpTypeEnum.JOB);
 
-    public Account(int id) {
+    public Account(long id) {
         this.id = id;
     }
 
     //------------------------
     // GET / SET
     //------------------------
-    public int getId() {
+    public long getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public Exp getBaseExp() {
         return baseExp;
     }
 
-    public void setBaseExp(Exp baseExp) {
-        this.baseExp = baseExp;
-    }
-
     public Exp getJobExp() {
         return jobExp;
     }
 
-    public void setJobExp(Exp jobExp) {
-        this.jobExp = jobExp;
+    public void setBaseExp(long baseExp) {
+        this.baseExp.setLastExp(baseExp);
+    }
+
+    public void setJobExp(long jobExp) {
+        this.jobExp.setLastExp(jobExp);
+    }
+
+    public void setTotalBaseExp(long totalBaseExp) {
+        this.baseExp.setTotalExp(totalBaseExp);
+    }
+
+    public void setTotalJobExp(long totalJobExp) {
+        this.baseExp.setTotalExp(totalJobExp);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.ro.view;
 
-import com.ro.models.Exp;
+import com.ro.models.Account;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
@@ -10,11 +10,13 @@ import java.util.Formatter;
 
 public class ExpPanel {
 
-    private static final String ACCOUNT_LABEL = "Account: %d";
-    private static final String BASE_EXP_HOUR = "Base Exp/Hour: %.1f";
-    private static final String JOB_EXP_HOUR = "Job Exp/Hour: %.1f";
+    private static final String ACCOUNT_LABEL       = "Account: %d";
+    private static final String EXP_OBTAIN_LABEL    = "Exp: %d/%d";
+    private static final String BASE_EXP_HOUR_LABEL = "Base Exp/Hour: %,.1f";
+    private static final String JOB_EXP_HOUR_LABEL  = "Job Exp/Hour: %,.1f";
 
     private Label accountLabel = new Label("Account: <unknown>");
+    private Label lastExpLabel = new Label("Exp: <n>/<n>");
     private Label baseExpHourLabel = new Label("Base Exp/Hour: <n>");
     private Label jobExpHourLabel = new Label("Job Exp/Hour:  <n>");
 
@@ -32,6 +34,7 @@ public class ExpPanel {
 
         expPanel.getChildren().addAll(
                 accountLabel,
+                lastExpLabel,
                 baseExpHourLabel,
                 jobExpHourLabel
         );
@@ -50,22 +53,23 @@ public class ExpPanel {
         });
     }
 
-    public void setExpHour(Exp exp) {
+    public void setExpHour(Account ac) {
         Platform.runLater(() -> {
-            // Make info
+            // Now
             StringBuilder sbuf = new StringBuilder();
             Formatter fmt = new Formatter(sbuf);
-
-            switch (exp.getType()) {
-                case BASE:
-                    fmt.format(BASE_EXP_HOUR, exp.getExpHour());
-                    baseExpHourLabel.setText(sbuf.toString());
-                    break;
-                case JOB:
-                    fmt.format(JOB_EXP_HOUR, exp.getExpHour());
-                    jobExpHourLabel.setText(sbuf.toString());
-                    break;
-            }
+            fmt.format(EXP_OBTAIN_LABEL, ac.getBaseExp().getLastExp(), ac.getJobExp().getLastExp());
+            lastExpLabel.setText(sbuf.toString());
+            // BASE
+            sbuf = new StringBuilder();
+            fmt = new Formatter(sbuf);
+            fmt.format(BASE_EXP_HOUR_LABEL, ac.getBaseExp().getExpHour());
+            baseExpHourLabel.setText(sbuf.toString());
+            // JOB
+            sbuf = new StringBuilder();
+            fmt = new Formatter(sbuf);
+            fmt.format(JOB_EXP_HOUR_LABEL, ac.getJobExp().getExpHour());
+            jobExpHourLabel.setText(sbuf.toString());
 
         });
     }

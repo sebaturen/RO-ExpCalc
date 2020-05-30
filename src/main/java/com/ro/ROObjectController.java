@@ -19,8 +19,7 @@ public class ROObjectController {
             while (true) {
                 for (Map.Entry<Long, Account> ac : ROObjectController.shared.getAccounts().entrySet()) {
                     main.mainPanel.setAccountId(ac.getValue().getId());
-                    main.mainPanel.setExpHour(ac.getValue().getBaseExp());
-                    main.mainPanel.setExpHour(ac.getValue().getJobExp());
+                    main.mainPanel.setExpHour(ac.getValue());
                 }
                 try {
                     Thread.sleep(1000);

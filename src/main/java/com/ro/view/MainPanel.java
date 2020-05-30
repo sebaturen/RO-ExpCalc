@@ -1,7 +1,7 @@
 package com.ro.view;
 
+import com.ro.models.Account;
 import javafx.scene.layout.VBox;
-import com.ro.models.Exp;
 
 public class MainPanel extends VBox {
 
@@ -22,8 +22,8 @@ public class MainPanel extends VBox {
         this.expPanel.setAccountLabel(id);
     }
 
-    public void setExpHour(Exp exp) {
-        expPanel.setExpHour(exp);
+    public void setExpHour(Account ac) {
+        expPanel.setExpHour(ac);
     }
 
     /** PAINT ZONE!: **/

@@ -1,16 +1,12 @@
 package com.ro;
 
-import com.ro.models.Account;
 import com.ro.network.PacketDecryption;
 import com.ro.network.PacketInterceptor;
 import com.ro.view.MainPanel;
 import javafx.application.Application;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.util.Map;
 
 public class main extends Application {
 

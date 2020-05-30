@@ -50,7 +50,7 @@ public class PacketDecryption {
             String packContent = packet.substring(index, index + (EXP_PACKET_SIZE*2)+(EXP_PACKET_SIZE-1));
             String[] sepContent = packContent.split(" ");
 
-            //System.out.println(packContent);
+            System.out.println(packContent);
 
             // Packet content
             List<String> accountIdList = Arrays.asList(Arrays.copyOfRange(sepContent, 2, 6));
@@ -66,16 +66,19 @@ public class PacketDecryption {
             long exp = new BigInteger(String.join("", expList), 16).longValue();
             ExpTypeEnum type = ExpTypeEnum.valueOf(new BigInteger(String.join("", typeList), 16).intValue());
 
-            // Check if pre-exist
-            Account currentAc;
-            if (ROObjectController.shared.hasAccount(acId)) {
-                currentAc = ROObjectController.shared.getAccount(acId);
-            } else {
-                currentAc = new Account(acId);
-                ROObjectController.shared.addAccount(acId, currentAc);
-            }
+            if (type != null && exp > 0) {
 
-            if (type != null) {
+                // Check if pre-exist
+                Account currentAc;
+                if (ROObjectController.shared.hasAccount(acId)) {
+                    currentAc = ROObjectController.shared.getAccount(acId);
+                    currentAc.setPort(port);
+                } else {
+                    currentAc = new Account(acId);
+                    currentAc.setPort(port);
+                    ROObjectController.shared.addAccount(acId, currentAc);
+                }
+
                 switch (type) {
                     case JOB:
                         currentAc.setJobExp(exp);
@@ -84,15 +87,16 @@ public class PacketDecryption {
                         currentAc.setBaseExp(exp);
                         break;
                 }
+
+                System.out.println("Account: "+ acId);
+                System.out.println("Exp: "+ exp);
+                System.out.println("BASE Exp/Hour "+ currentAc.getBaseExp().getExpHour());
+                System.out.println("JOB Exp/Hour "+ currentAc.getJobExp().getExpHour());
+                System.out.println("Type: "+ type);
+                System.out.println("---------");
             }
 
-            /*
-            System.out.println("Account: "+ acId);
-            System.out.println("Exp: "+ exp);
-            System.out.println("BASE Exp/Hour "+ currentAc.getBaseExp().getExpHour());
-            System.out.println("JOB Exp/Hour "+ currentAc.getJobExp().getExpHour());
-            System.out.println("Type: "+ type);
-            System.out.println("---------"); */
+
         }
     }
 
@@ -111,7 +115,7 @@ public class PacketDecryption {
              index >= 0;
              index = packet.indexOf(TOTAL_EXP_PACKET, index + 1))
         {
-            String packContent = packet.substring(index, index + (TOTAL_EXP_PACKET_SIZE*2)+(TOTAL_EXP_PACKET_SIZE-1));
+            /*String packContent = packet.substring(index, index + (TOTAL_EXP_PACKET_SIZE*2)+(TOTAL_EXP_PACKET_SIZE-1));
             String[] sepContent = packContent.split(" ");
             // Packet content
             List<String> type = Arrays.asList(Arrays.copyOfRange(sepContent, 2, 4));

@@ -2,12 +2,19 @@ package com.ro.models;
 
 import com.ro.enums.ExpTypeEnum;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Account {
 
     private long id;
     private int port;
-    private Exp baseExp = new Exp(ExpTypeEnum.BASE);
-    private Exp jobExp = new Exp(ExpTypeEnum.JOB);
+    private long characterLogonId;
+    private List<Character> characters = new ArrayList<>();
+
+    public Account(int port) {
+        this.port = port;
+    }
 
     public Account(long id) {
         this.id = id;
@@ -20,40 +27,77 @@ public class Account {
         return id;
     }
 
-    public Exp getBaseExp() {
-        return baseExp;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public Exp getJobExp() {
-        return jobExp;
+    public void addCharacter(Character c) {
+        this.characters.add(c);
     }
 
-    public void setBaseExp(long baseExp) {
-        this.baseExp.setLastExp(baseExp);
+    public void setPortCharacter(long cId, int port) {
+        for(Character cr : characters) {
+            if (cr.getId() == cId) {
+                cr.setPort(port);
+            } else {
+                cr.setPort(0);
+            }
+        }
     }
 
-    public void setJobExp(long jobExp) {
-        this.jobExp.setLastExp(jobExp);
+    public boolean hasCharacter(long cId) {
+        for(Character cr : characters) {
+            if (cr.getId() == cId) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public void setTotalBaseExp(long totalBaseExp) {
-        this.baseExp.setTotalExp(totalBaseExp);
+    public Character getCharacter(int port) {
+        for (Character ch : characters) {
+            if (ch.getPort() == port) {
+                return ch;
+            }
+        }
+        return null;
     }
 
-    public void setTotalJobExp(long totalJobExp) {
-        this.baseExp.setTotalExp(totalJobExp);
+    public int getPort() {
+        return port;
     }
 
     public void setPort(int port) {
         this.port = port;
     }
 
+    public long getCharacterLogonId() {
+        return characterLogonId;
+    }
+
+    public List<Character> getCharacters() {
+        return characters;
+    }
+
+    public void setCharacterLogon(long characterLogon) {
+        this.characterLogonId = characterLogon;
+    }
+
+    public Character getCharacterLogon() {
+        for(Character ch : characters) {
+            if (ch.getId() == this.characterLogonId) {
+                return ch;
+            }
+        }
+
+        return null;
+    }
+
     @Override
     public String toString() {
         return "Account{" +
                 "id=" + id +
-                ", baseExp=" + baseExp +
-                ", jobExp=" + jobExp +
+                ", characters=" + characters +
                 '}';
     }
 }

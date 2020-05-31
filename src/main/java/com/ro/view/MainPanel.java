@@ -18,12 +18,8 @@ public class MainPanel extends VBox {
         this.expPanel = new ExpPanel();
     }
 
-    public void setAccountId(long id) {
-        this.expPanel.setAccountLabel(id);
-    }
-
-    public void setExpHour(Account ac) {
-        expPanel.setExpHour(ac);
+    public void setAccount(Account ac) {
+        this.expPanel.setAccount(ac);
     }
 
     /** PAINT ZONE!: **/

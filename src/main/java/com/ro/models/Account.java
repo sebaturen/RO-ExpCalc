@@ -97,6 +97,8 @@ public class Account {
     public String toString() {
         return "Account{" +
                 "id=" + id +
+                ", port=" + port +
+                ", characterLogonId=" + characterLogonId +
                 ", characters=" + characters +
                 '}';
     }

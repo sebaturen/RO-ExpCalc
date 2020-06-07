@@ -37,7 +37,9 @@ public class Exp {
     }
 
     public void setLastExp(long lastExp) {
-        startTimeStamp = new Date();
+        if (startTimeStamp == null) {
+            startTimeStamp = new Date();
+        }
         this.accumulativeExp += lastExp;
         this.lastExp = lastExp;
     }

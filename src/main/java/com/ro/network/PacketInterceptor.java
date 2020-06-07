@@ -29,7 +29,7 @@ public class PacketInterceptor {
                 TcpPacket.TcpHeader tcpPacket = packet.get(TcpPacket.class).getHeader();
                 byte[] evPacket = packet.get(TcpPacket.class).getPayload().getRawData();
 
-                return new String[]{ convertBytesToHex(evPacket), ""+tcpPacket.getDstPort().valueAsInt() };
+                return new String[]{ convertBytesToHex(evPacket).trim(), ""+tcpPacket.getDstPort().valueAsInt() };
 
             }
 

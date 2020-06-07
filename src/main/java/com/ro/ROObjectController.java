@@ -20,7 +20,10 @@ public class ROObjectController {
         new Thread(() -> {
             while (true) {
                 for (Account ac : accounts) {
-                    main.mainPanel.setAccount(ac);
+                    if (ac.getCharacterLogon() != null) {
+                        System.out.println(ac);
+                        main.mainPanel.setAccount(ac);
+                    }
                 }
                 try {
                     Thread.sleep(1000);
@@ -66,7 +69,6 @@ public class ROObjectController {
         }
         return null;
     }
-
 
     public void addAccount(Account ac) {
         accounts.add(ac);

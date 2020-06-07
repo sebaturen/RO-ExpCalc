@@ -19,7 +19,7 @@ public class PacketDecryption {
      */
     public void decryption(String packet, int port) {
 
-        //System.out.println("[ALL] -> ("+ port +") "+ packet);
+        System.out.println("[ALL] -> ("+ port +") "+ packet);
         // Exp Packet
         if (packet.contains(EXP_PACKET)) {
             newExp(packet, port);
@@ -31,8 +31,11 @@ public class PacketDecryption {
         }
 
         // Received Character
-        if (packet.contains(RECEIVED_CHARACTERS_PACKET)) {
-            receivedCharacter(packet, port);
+        if (ROObjectController.shared.getAccount(port) == null ||
+            ROObjectController.shared.getAccount(port).getCharacters().size() == 0) {
+            if (packet.contains(RECEIVED_CHARACTERS_PACKET)) {
+                receivedCharacter(packet, port);
+            }
         }
 
         // Received Character ID And Map
@@ -50,6 +53,11 @@ public class PacketDecryption {
             accountId(packet, port);
         }
 
+        // Small account ID
+        if (packet.length() == (ONLY_ACCOUNT_ID_PACKET_SIZE*2)+(ONLY_ACCOUNT_ID_PACKET_SIZE-1)) {
+            onlyAccountId(packet, port);
+        }
+
     }
 
     /**
@@ -65,6 +73,7 @@ public class PacketDecryption {
     private static final int EXP_PACKET_SIZE = 16;
     private void newExp(String packet, int port) {
 
+        System.out.println("[exp] port -> "+ port +" // "+ packet);
         for (int index = packet.indexOf(EXP_PACKET);
              index >= 0;
              index = packet.indexOf(EXP_PACKET, index + 1))
@@ -135,7 +144,9 @@ public class PacketDecryption {
     private static final String TOTAL_EXP_PACKET = "CB 0A";
     private static final int TOTAL_EXP_PACKET_SIZE = 12;
     private void newTotalExp(String packet, int port) {
-        //System.out.println("[totalExp] port -> "+ port +" // "+ packet);
+
+        System.out.println("[totalExp] port -> "+ port +" // "+ packet);
+
         for (int index = packet.indexOf(TOTAL_EXP_PACKET);
              index >= 0;
              index = packet.indexOf(TOTAL_EXP_PACKET, index + 1))
@@ -195,7 +206,7 @@ public class PacketDecryption {
     private static final int RECEIVED_CHARACTERS_PACKET_SIZE = 155;
     private void receivedCharacter(String packet, int port) {
 
-        //System.out.println("[allChars] port -> "+ port +" // "+ packet);
+        System.out.println("[allChars] port -> "+ port +" // "+ packet);
         // Remove packet identifier and size
         packet = packet.substring(12);
         int charSize = (RECEIVED_CHARACTERS_PACKET_SIZE*2)+(RECEIVED_CHARACTERS_PACKET_SIZE);
@@ -224,17 +235,14 @@ public class PacketDecryption {
             Account ac;
             if (ROObjectController.shared.hasAccount(port)) {
                 ac = ROObjectController.shared.getAccount(port);
-            } else {
-                ac = new Account(port);
-                ROObjectController.shared.addAccount(ac);
+
+                Character ch = new Character(cId);
+                ch.getBaseExp().setLvl(cBaseLvl);
+                ch.getJobExp().setLvl(cJobLvl);
+
+                ac.addCharacter(ch);
+                System.out.println(ch);
             }
-
-            Character ch = new Character(cId);
-            ch.getBaseExp().setLvl(cBaseLvl);
-            ch.getJobExp().setLvl(cJobLvl);
-
-            ac.addCharacter(ch);
-            System.out.println(ch);
 
         }
 
@@ -251,6 +259,8 @@ public class PacketDecryption {
     private static final int RECEIVED_CHARACTER_ID_AND_MAP_PACKET_SIZE = 28;
     private void receivedCharacterIDAndMap(String packet, int port) {
 
+        System.out.println("[charAndMap] port -> "+ port +" // "+ packet);
+
         String[] sepContent = packet.split(" ");
         if (sepContent.length == 28) {
 
@@ -263,8 +273,9 @@ public class PacketDecryption {
             long charLoginId = new BigInteger(String.join("", charLoginIdList), 16).longValue();
 
             Account ac = ROObjectController.shared.getAccount(port);
-            if (ac.hasCharacter(charLoginId)) {
+            if (ac != null) {
                 ac.setCharacterLogon(charLoginId);
+                ac.getCharacterLogon().setPort(port);
             }
 
         }
@@ -277,6 +288,7 @@ public class PacketDecryption {
      */
     private static final String SYNC_REQUEST_PACKET = "87 01";
     private void syncRequest(String packet, int port) {
+        System.out.println("[syncRequest] port -> "+ port +" // "+ packet);
         accountId(packet, port);
     }
 
@@ -286,7 +298,7 @@ public class PacketDecryption {
      */
     private static final String ACCOUNT_ID_PACKET = "83 02";
     private void accountId(String packet, int port) {
-
+        System.out.println("[account Id] port -> "+ port +" // "+ packet);
         String[] sepContent = packet.split(" ");
         if (sepContent.length == 6) {
 
@@ -305,6 +317,39 @@ public class PacketDecryption {
         }
 
 
+    }
+
+    /**
+     * When account is in login, before get all character, the client request the account ID
+     * for propose to fix this ID, use this function.
+     * xx xx xx xx -> Accont ID [4]
+     * @param packet
+     * @param port
+     */
+    private static final int ONLY_ACCOUNT_ID_PACKET_SIZE = 4;
+    private void onlyAccountId(String packet, int port) {
+        System.out.println("[only account Id] port -> "+ port +" // "+ packet);
+
+        String[] sepContent = packet.split(" ");
+
+        if (sepContent.length == ONLY_ACCOUNT_ID_PACKET_SIZE) {
+            // Packet content
+            List<String> accountIdList = Arrays.asList(sepContent);
+            Collections.reverse(accountIdList);
+            // Parse info
+            long accountId = new BigInteger(String.join("", accountIdList), 16).longValue();
+
+            if (ROObjectController.shared.hasAccount(accountId)) {
+                ROObjectController.shared.getAccount(accountId).setPort(port);
+            } else if (ROObjectController.shared.hasAccount(port)) {
+                ROObjectController.shared.getAccount(port).setId(accountId);
+            } else {
+                Account ac = new Account(port);
+                ac.setId(accountId);
+                ROObjectController.shared.addAccount(ac);
+            }
+
+        }
     }
 
 }
